@@ -1,5 +1,6 @@
 package collections;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /** An implementation of MyMap interface.
@@ -71,13 +72,14 @@ public class MyHashMap implements MyMap {
      */
     @Override
     public Object delete(String key) throws IllegalArgumentException{
-        HashEntry current = ((HashEntry) getEntry(key));
-        HashEntry previous = current;
-        current.setKey(null);
-        current.setData(null);
-        current.setDeleted(true);
+        HashEntry currentEntry = getEntry(key);
+        if(currentEntry == null) return null;
+        Object previousData = currentEntry.getData();
+        currentEntry.setKey(null);
+        currentEntry.setData(null);
+        currentEntry.setDeleted(true);
         this.currentSize--;
-        return previous.getData();
+        return previousData;
     }
 
     /** Return the number of entries in the map
@@ -92,9 +94,13 @@ public class MyHashMap implements MyMap {
      * @return a list of all keys in the map
      */
     public List<String> keys() {
-        // FILL IN CODE
-
-        return null; // change this
+        List<String> keysList = new ArrayList<>();
+        for (int i = 0; i < maxSize; i++) {
+            if(table[i] != null && table[i].getKey() != null){
+                keysList.add(table[i].getKey());
+            }
+        }
+        return keysList;
     }
 
     /** Return map values
@@ -102,9 +108,13 @@ public class MyHashMap implements MyMap {
      */
     @Override
     public List<Object> values() {
-       // FILL IN CODE
-
-        return null; // change this
+        List<Object> valuesList = new ArrayList<>();
+        for (int i = 0; i < maxSize; i++) {
+            if(table[i] != null && table[i].getKey() != null){
+                valuesList.add(table[i].getData());
+            }
+        }
+        return valuesList;
     }
 
     /** Returns the index in the hash table that this key hashes to.
@@ -126,7 +136,12 @@ public class MyHashMap implements MyMap {
         if(size() > 0) {
             for (int i = 0; i < maxSize; i++, hasCode++) {
                 if(table[hasCode] == null){break;}
-                if(table[hasCode].isDeleted()){continue;}
+                if(table[hasCode].isDeleted()){
+                    if (hasCode + 1 == maxSize) {
+                        hasCode = -1;
+                    }
+                    continue;
+                }
                 if (table[hasCode].getKey().equals(key)) {
                     return table[hasCode];
                 }
@@ -137,5 +152,4 @@ public class MyHashMap implements MyMap {
         }
         return null;
     }
-
 }
