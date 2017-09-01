@@ -9,17 +9,16 @@ import java.util.List;
 public class MyHashMap implements MyMap {
 
      private HashEntry[] table; // the actual hashtable - an array of Hash Entries
-     private int maxSize; // the maximum number of entries in the table
+     private final int  maxSize; // the maximum number of entries in the table
      private int currentSize; // how many entries the table contains
 
     /** A constructor for MyHashMap class
      *  @param maxSize - the maximum number of elements in the hash table.
      */
     public MyHashMap(int maxSize) {
-        // FILL IN CODE
-        // Initialize instance variables maxSize and table
-
-
+        this.maxSize = maxSize;
+        this.currentSize = 0;
+        this.table = new HashEntry[maxSize];
     }
 
     /** Insert a (key, data) into the map, overwriting the previous value associated with the given key.
@@ -28,11 +27,29 @@ public class MyHashMap implements MyMap {
      * @return the previous value associated with this key or null if the key did not map to any value.
      */
     @Override
-    public Object put(String key, Object data) {
-        // FILL IN CODE
+    public Object put(String key, Object data) throws IllegalArgumentException{
+        if(key == null) throw new IllegalArgumentException("Entry is missing.");
+        HashEntry entry = getEntry(key);
+        if(entry == null && size() == maxSize){
+            return null;
+        } else if (entry == null) {
+            int hasCode = hash(key);
 
-        return null; // change this
-
+            for (int i = 0; i < maxSize; i++, hasCode++) {
+                if (table[hasCode] == null || table[hasCode].isDeleted()) {
+                    table[hasCode] = new HashEntry(key, data);
+                    this.currentSize++;
+                    break;
+                }
+                if (hasCode + 1 == maxSize) {
+                    hasCode = -1;
+                }
+            }
+            return this.table[hasCode];
+        } else {
+            entry.setData(data);
+            return entry;
+        }
     }
 
     /** Return the value associated with the given key or null if the key does not map to any value
@@ -40,11 +57,12 @@ public class MyHashMap implements MyMap {
      *  @return the value associated with the key.
      */
     @Override
-    public Object get(String key) {
-        // FILL IN CODE
-
-        return null; // change this
-
+    public Object get(String key) throws IllegalArgumentException{
+        HashEntry entry = getEntry(key);
+        if (entry != null) {
+            return entry.getData();
+        }
+        return null;
     }
 
     /** Delete the (key, data) entry from the map or do nothing if this key is not in the map.
@@ -52,10 +70,14 @@ public class MyHashMap implements MyMap {
      *  @return The value associated with this key before deletion
      */
     @Override
-    public Object delete(String key) {
-        // FILL IN CODE
-
-        return null; // change this
+    public Object delete(String key) throws IllegalArgumentException{
+        HashEntry current = ((HashEntry) getEntry(key));
+        HashEntry previous = current;
+        current.setKey(null);
+        current.setData(null);
+        current.setDeleted(true);
+        this.currentSize--;
+        return previous.getData();
     }
 
     /** Return the number of entries in the map
@@ -63,7 +85,6 @@ public class MyHashMap implements MyMap {
      */
     @Override
     public int size() {
-
         return currentSize;
     }
 
@@ -91,9 +112,30 @@ public class MyHashMap implements MyMap {
      * @return the index in the table
      * */
     private int hash(String key) {
-        // FILL IN CODE
-        // Call the hashCode() method in class String and return this value modulus the table size
-
-        return 0; // change this
+        Integer hash= key.hashCode();
+        return hash.MAX_VALUE % maxSize;
     }
+
+    /** Return the Entry associated with the given key or null if the key does not map to any value
+     *  @param key If null, throw IllegalArgumentException.
+     *  @return the HashEntry associated with the key.
+     */
+    private HashEntry getEntry(String key) throws IllegalArgumentException{
+        if(key == null) throw new IllegalArgumentException("Entry is missing.");
+        int hasCode = hash(key);
+        if(size() > 0) {
+            for (int i = 0; i < maxSize; i++, hasCode++) {
+                if(table[hasCode] == null){break;}
+                if(table[hasCode].isDeleted()){continue;}
+                if (table[hasCode].getKey().equals(key)) {
+                    return table[hasCode];
+                }
+                if (hasCode + 1 == maxSize) {
+                    hasCode = -1;
+                }
+            }
+        }
+        return null;
+    }
+
 }
