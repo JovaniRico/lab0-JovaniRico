@@ -39,7 +39,7 @@ class MyHashMapTest {
     }
 
     @Test
-    void shouldThrowNullPointerExceptionMissingEntry() {
+    void shouldThrowNullPointerExceptionMissingEntryPutMethod() {
         map = new MyHashMap(10);
         Throwable exception = assertThrows(IllegalArgumentException.class, () -> {
             map.put(null, "");
@@ -61,7 +61,7 @@ class MyHashMapTest {
     }
 
     @Test
-    public void shouldThrowNullPointerExceptionNotkey() {
+    public void shouldThrowNullPointerExceptionNotkeyGetMethod() {
         map = new MyHashMap(10);
         Throwable exception = assertThrows(IllegalArgumentException.class, () -> {
             map.get(null);
@@ -82,6 +82,15 @@ class MyHashMapTest {
     public void shouldReturnNullOnDelte(){
         map = new MyHashMap(10);
         assertNull(map.delete("Jovanii"));
+    }
+
+    @Test
+    void shouldThrowNullPointerExceptionMissingEntryDeleteMethod() {
+        map = new MyHashMap(10);
+        Throwable exception = assertThrows(IllegalArgumentException.class, () -> {
+            map.delete(null);
+        });
+        assertEquals("Entry is missing.", exception.getMessage());
     }
 
     @Test
