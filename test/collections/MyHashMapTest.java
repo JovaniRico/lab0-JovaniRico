@@ -32,9 +32,7 @@ class MyHashMapTest {
         HashEntry entry = new HashEntry("Jovanii", "Rico");
         assertEquals(entry.toString(), map.put("Jovanii", "Rico").toString());
         assertEquals(1, map.size());
-
-        HashEntry entry2 = new HashEntry("Jovanii", "Martinez");
-        assertEquals(entry2.toString(), map.put("Jovanii", "Martinez").toString());
+        assertEquals("Rico", map.put("Jovanii", "Martinez").toString());
         assertEquals(1, map.size());
     }
 

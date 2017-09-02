@@ -48,8 +48,9 @@ public class MyHashMap implements MyMap {
             }
             return this.table[hasCode];
         } else {
+            Object previous = entry.getData();
             entry.setData(data);
-            return entry;
+            return previous;
         }
     }
 
